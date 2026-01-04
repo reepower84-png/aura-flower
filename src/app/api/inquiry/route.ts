@@ -1,6 +1,49 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
+const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL
+
+async function sendDiscordNotification(name: string, phone: string, message: string) {
+  if (!DISCORD_WEBHOOK_URL) return
+
+  const now = new Date().toLocaleString('ko-KR', {
+    timeZone: 'Asia/Seoul',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  })
+
+  const embed = {
+    embeds: [
+      {
+        title: '🌸 새로운 문의가 접수되었습니다!',
+        color: 0x7c9a73,
+        fields: [
+          { name: '👤 이름', value: name, inline: true },
+          { name: '📞 전화번호', value: phone, inline: true },
+          { name: '💬 상담문의', value: message },
+          { name: '🕐 접수시간', value: now },
+        ],
+        footer: {
+          text: '아우라플라워 문의 알림',
+        },
+      },
+    ],
+  }
+
+  try {
+    await fetch(DISCORD_WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(embed),
+    })
+  } catch (error) {
+    console.error('Discord notification error:', error)
+  }
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -31,6 +74,9 @@ export async function POST(request: NextRequest) {
         { status: 500 }
       )
     }
+
+    // Discord 알림 전송
+    await sendDiscordNotification(name, phone, message)
 
     return NextResponse.json({ success: true, id: data?.[0]?.id })
   } catch (error) {
