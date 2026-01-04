@@ -7,10 +7,17 @@ interface Inquiry {
   name: string
   phone: string
   message: string
+  status: string
   created_at: string
 }
 
 const ADMIN_PASSWORD = 'aura2024!' // 실제 운영시 환경변수로 관리 권장
+
+const STATUS_OPTIONS = [
+  { value: 'pending', label: '대기중', color: 'bg-yellow-100 text-yellow-800' },
+  { value: 'contacted', label: '연락완료', color: 'bg-blue-100 text-blue-800' },
+  { value: 'completed', label: '상담완료', color: 'bg-green-100 text-green-800' },
+]
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -51,6 +58,42 @@ export default function AdminPage() {
     }
   }
 
+  const handleStatusChange = async (id: string, newStatus: string) => {
+    try {
+      const response = await fetch('/api/inquiry', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, status: newStatus }),
+      })
+
+      if (response.ok) {
+        setInquiries(prev =>
+          prev.map(inquiry =>
+            inquiry.id === id ? { ...inquiry, status: newStatus } : inquiry
+          )
+        )
+      }
+    } catch (error) {
+      console.error('Error updating status:', error)
+    }
+  }
+
+  const handleDelete = async (id: string) => {
+    if (!confirm('정말로 이 문의를 삭제하시겠습니까?')) return
+
+    try {
+      const response = await fetch(`/api/inquiry?id=${id}`, {
+        method: 'DELETE',
+      })
+
+      if (response.ok) {
+        setInquiries(prev => prev.filter(inquiry => inquiry.id !== id))
+      }
+    } catch (error) {
+      console.error('Error deleting inquiry:', error)
+    }
+  }
+
   useEffect(() => {
     const authStatus = sessionStorage.getItem('adminAuth')
     if (authStatus === 'true') {
@@ -73,6 +116,11 @@ export default function AdminPage() {
       hour: '2-digit',
       minute: '2-digit',
     })
+  }
+
+  const getStatusStyle = (status: string) => {
+    const option = STATUS_OPTIONS.find(opt => opt.value === status)
+    return option?.color || 'bg-gray-100 text-gray-800'
   }
 
   if (!isAuthenticated) {
@@ -187,6 +235,12 @@ export default function AdminPage() {
                     <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       상담문의
                     </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      상태
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      관리
+                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -208,6 +262,27 @@ export default function AdminPage() {
                       </td>
                       <td className="px-6 py-4">
                         <p className="text-sm text-gray-700 max-w-md">{inquiry.message}</p>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <select
+                          value={inquiry.status || 'pending'}
+                          onChange={(e) => handleStatusChange(inquiry.id, e.target.value)}
+                          className={`text-sm font-medium px-3 py-1.5 rounded-full border-0 cursor-pointer ${getStatusStyle(inquiry.status || 'pending')}`}
+                        >
+                          {STATUS_OPTIONS.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <button
+                          onClick={() => handleDelete(inquiry.id)}
+                          className="text-sm text-red-600 hover:text-red-800 hover:bg-red-50 px-3 py-1.5 rounded-lg transition-colors"
+                        >
+                          🗑️ 삭제
+                        </button>
                       </td>
                     </tr>
                   ))}

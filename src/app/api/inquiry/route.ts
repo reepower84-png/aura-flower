@@ -66,3 +66,73 @@ export async function GET() {
     )
   }
 }
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const body = await request.json()
+    const { id, status } = body
+
+    if (!id || !status) {
+      return NextResponse.json(
+        { error: 'ID와 상태값이 필요합니다.' },
+        { status: 400 }
+      )
+    }
+
+    const { error } = await supabase
+      .from('inquiries')
+      .update({ status })
+      .eq('id', id)
+
+    if (error) {
+      console.error('Supabase error:', error)
+      return NextResponse.json(
+        { error: '상태 업데이트 중 오류가 발생했습니다.' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Error updating inquiry:', error)
+    return NextResponse.json(
+      { error: '상태 업데이트 중 오류가 발생했습니다.' },
+      { status: 500 }
+    )
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url)
+    const id = searchParams.get('id')
+
+    if (!id) {
+      return NextResponse.json(
+        { error: 'ID가 필요합니다.' },
+        { status: 400 }
+      )
+    }
+
+    const { error } = await supabase
+      .from('inquiries')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error('Supabase error:', error)
+      return NextResponse.json(
+        { error: '삭제 중 오류가 발생했습니다.' },
+        { status: 500 }
+      )
+    }
+
+    return NextResponse.json({ success: true })
+  } catch (error) {
+    console.error('Error deleting inquiry:', error)
+    return NextResponse.json(
+      { error: '삭제 중 오류가 발생했습니다.' },
+      { status: 500 }
+    )
+  }
+}

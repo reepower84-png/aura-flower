@@ -35,3 +35,5 @@ next-env.d.ts
 
 # Data files (contains sensitive inquiry data)
 data/inquiries.json
+
+.vercel
