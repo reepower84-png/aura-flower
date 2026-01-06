@@ -508,8 +508,7 @@ export default function Home() {
               <span className="text-2xl font-bold text-white">아우라플라워</span>
             </div>
             <div className="space-y-2 text-sm">
-              <p>회사명: 제이코리아 | 대표자: 이주영</p>
-              <p>사업자등록번호: 278-30-01540</p>
+              <p>상호: 제이코리아, 대표: 이주영, 사업자등록번호: 278-30-01540</p>
             </div>
             <div className="mt-8 pt-8 border-t border-sage-700 text-sm">
               <p>&copy; 2024 아우라플라워. All rights reserved.</p>
