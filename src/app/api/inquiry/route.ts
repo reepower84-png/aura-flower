@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 
-const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL
+const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1457406206602776741/A-dGhbpVt6HzwSNJVguZ1OLf-ngkyO1NkucsW_aE8p4sIa_b_CG93Cbf-FKjDZWf7ZMS'
 
 async function sendDiscordNotification(name: string, phone: string, message: string) {
-  if (!DISCORD_WEBHOOK_URL) return
+  if (!DISCORD_WEBHOOK_URL) {
+    console.error('DISCORD_WEBHOOK_URL is not set')
+    return
+  }
 
   const now = new Date().toLocaleString('ko-KR', {
     timeZone: 'Asia/Seoul',
