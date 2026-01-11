@@ -166,10 +166,13 @@ export default function Home() {
           <div className="flex justify-between items-center h-16">
             <button
               onClick={() => scrollToSection('hero')}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+              className="hover:opacity-80 transition-opacity"
             >
-              <span className="text-2xl">🌸</span>
-              <span className="text-xl font-bold text-sage-800">아우라플라워</span>
+              <img
+                src="/ChatGPT_Image_2026년_1월_11일_오후_10_30_51_가로-removebg-preview.png"
+                alt="아우라플라워"
+                className="h-16 w-auto"
+              />
             </button>
 
             {/* Desktop Menu */}
@@ -503,9 +506,12 @@ export default function Home() {
       <footer className="bg-sage-900 text-sage-300 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="flex items-center justify-center gap-2 mb-6">
-              <span className="text-3xl">🌸</span>
-              <span className="text-2xl font-bold text-white">아우라플라워</span>
+            <div className="flex items-center justify-center mb-6">
+              <img
+                src="/ChatGPT_Image_2026년_1월_11일_오후_10_30_51_가로-removebg-preview.png"
+                alt="아우라플라워"
+                className="h-20 w-auto"
+              />
             </div>
             <div className="space-y-2 text-sm">
               <p>상호: 제이코리아, 대표: 이주영, 사업자등록번호: 278-30-01540</p>
