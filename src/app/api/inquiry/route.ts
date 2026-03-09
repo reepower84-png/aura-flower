@@ -59,33 +59,14 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const { data, error } = await supabase
-      .from('inquiries')
-      .insert([
-        {
-          name,
-          phone,
-          message,
-        }
-      ])
-      .select()
-
-    if (error) {
-      console.error('Supabase error:', error)
-      return NextResponse.json(
-        { error: '문의 저장 중 오류가 발생했습니다.' },
-        { status: 500 }
-      )
-    }
-
-    // Discord 알림 전송
+    // Discord 알림 직접 전송
     await sendDiscordNotification(name, phone, message)
 
-    return NextResponse.json({ success: true, id: data?.[0]?.id })
+    return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('Error saving inquiry:', error)
+    console.error('Error sending inquiry:', error)
     return NextResponse.json(
-      { error: '문의 저장 중 오류가 발생했습니다.' },
+      { error: '문의 접수 중 오류가 발생했습니다.' },
       { status: 500 }
     )
   }
