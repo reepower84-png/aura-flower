@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { backupFetch } from "../../../lib/inquiry-backup";
 
 const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1457406206602776741/A-dGhbpVt6HzwSNJVguZ1OLf-ngkyO1NkucsW_aE8p4sIa_b_CG93Cbf-FKjDZWf7ZMS'
 
@@ -37,7 +38,7 @@ async function sendDiscordNotification(name: string, phone: string, message: str
   }
 
   try {
-    await fetch(DISCORD_WEBHOOK_URL, {
+    await backupFetch(DISCORD_WEBHOOK_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(embed),
